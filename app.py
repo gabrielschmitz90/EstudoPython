@@ -1,19 +1,21 @@
-import requests
+import mysql.connector
+
+conexao = mysql.connector.connect(
+    host='localhost',
+    user='root',
+    password='Schmitz100@',
+    database='Vendas'
+)
+
+cursor = conexao.cursor()
 
 
-def buscar_cnpj(cnpj):
+sql = 'update vendedor set nome = %s where id_vendedor = %s'
 
-    cnpj = cnpj.replace('.', '').replace('/', '').replace('-', '')
-    url = f'https://brasilapi.com.br/api/cnpj/v1/{cnpj}'
-    resposta = requests.get(url)
+valores = ('gabriel schmitz', 1)
 
-    if resposta.status_code == 200:
-        dados = resposta.json()
-        print(f"Nome: {dados['razao_social']}")
-        print(f"Nome fantasia: {dados['nome_fantasia']}")
-        print(f"Logradouro: {dados['logradouro']}, {dados['numero']}")
-        return dados
-    else:
-        print("Erro ao buscar CNPJ. Verifique se o número está correto.")
-        return None
-buscar_cnpj("39.952.855/0001-58")
+cursor.execute(sql, valores)
+
+conexao.commit()
+
+print(f'{cursor.rowcount} registro(s) atualizado(s)')
